@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>在线图片转WebP工具 | 免费开源</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            padding: 24px 28px 36px;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #1a73e8, #0f9d58);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .sub {
+            color: #5f6368;
+            margin-bottom: 28px;
+            border-left: 3px solid #1a73e8;
+            padding-left: 12px;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 24px;
+            background: #fefefe;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 24px;
+        }
+        .upload-area:hover {
+            border-color: #1a73e8;
+            background: #f8faff;
+        }
+        .upload-area.drag-over {
+            border-color: #0f9d58;
+            background: #e6f4ea;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .file-input {
+            display: none;
+        }
+        .preview-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+        .preview-box {
+            flex: 1;
+            min-width: 180px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+        }
+        .preview-title {
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #1f2a3e;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            object-fit: contain;
+            background: #fff;
+        }
+        .quality-section {
+            margin: 20px 0;
+        }
+        .quality-label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #1a73e8;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 48px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button:disabled {
+            background: #bdc1c6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .info {
+            font-size: 0.8rem;
+            color: #5f6368;
+            text-align: center;
+            margin-top: 24px;
+            border-top: 1px solid #eef2f6;
+            padding-top: 20px;
+        }
+        .footer {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 16px;
+            color: #9aa0a6;
+        }
+        @media (max-width: 550px) {
+            .card { padding: 20px; }
+            .preview-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>✨ 图片转 WebP</h1>
+    <div class="sub">高质量 · 体积更小 · 完全在浏览器本地转换</div>
+
+    <div class="upload-area" id="dropZone">
+        <div class="upload-icon">📸</div>
+        <div>点击或拖拽图片至此</div>
+        <div style="font-size: 0.75rem; color: #888; margin-top: 8px;">支持 PNG / JPG / BMP / WEBP 等</div>
+        <input type="file" id="fileInput" accept="image/*" class="file-input">
+    </div>
+
+    <div class="preview-container" id="previewArea" style="display: none;">
+        <div class="preview-box">
+            <div class="preview-title">📷 原图</div>
+            <img id="originalPreview" class="preview-image" alt="原图预览">
+        </div>
+        <div class="preview-box">
+            <div class="preview-title">🟢 WebP 预览</div>
+            <img id="webpPreview" class="preview-image" alt="WebP预览">
+        </div>
+    </div>
+
+    <div class="quality-section">
+        <div class="quality-label">
+            <span>🎨 压缩质量</span>
+            <span id="qualityValue">85</span><span>%</span>
+        </div>
+        <input type="range" id="qualitySlider" min="1" max="100" value="85" step="1">
+    </div>
+
+    <button id="downloadBtn" disabled>📥 下载 WebP 图片</button>
+    <div class="info">
+        💡 所有转换都在你的设备上完成，图片不会上传到任何服务器，隐私安全。
+    </div>
+    <div class="footer">
+        开源 · 可部署到 GitHub Pages | 支持 Chrome / Edge / Safari / Firefox
+    </div>
+</div>
+
+<script>
+    (function() {
+        // DOM 元素
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const originalImg = document.getElementById('originalPreview');
+        const webpImg = document.getElementById('webpPreview');
+        const previewArea = document.getElementById('previewArea');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let currentBlob = null;       // 当前生成的 WebP Blob
+        let originalFile = null;      // 原始图片文件（用于显示原图）
+
+        // 显示质量数值
+        qualitySlider.addEventListener('input', (e) => {
+            qualityValue.textContent = e.target.value;
+            if (originalFile) {
+                convertToWebP(originalFile, parseInt(e.target.value));
+            }
+        });
+
+        // 触发文件选择
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // 拖拽上传
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files && files[0] && files[0].type.startsWith('image/')) {
+                handleFile(files[0]);
+            } else {
+                alert('请拖入图片文件（PNG/JPG/BMP等）');
+            }
+        });
+
+        // 核心转换函数：读取图片 -> 绘制canvas -> toBlob('image/webp')
+        function convertToWebP(file, quality) {
+            // 创建一个临时图片元素来加载原图
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                // 设置 canvas 尺寸为图片原始尺寸
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                // 转换为 WebP Blob
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        currentBlob = blob;
+                        // 预览 WebP
+                        const webpUrl = URL.createObjectURL(blob);
+                        webpImg.src = webpUrl;
+                        // 清理临时 URL (保留原图URL稍后清理)
+                        URL.revokeObjectURL(webpUrl);
+                        // 启用下载按钮
+                        downloadBtn.disabled = false;
+                    } else {
+                        alert('转换失败，浏览器可能不支持 WebP 编码');
+                        downloadBtn.disabled = true;
+                    }
+                    // 清理原图创建的URL
+                    URL.revokeObjectURL(url);
+                }, 'image/webp', quality / 100);
+            };
+            img.onerror = () => {
+                alert('图片加载失败，请检查文件格式');
+                URL.revokeObjectURL(url);
+                downloadBtn.disabled = true;
+            };
+            img.src = url;
+        }
+
+        // 处理选择的文件
+        function handleFile(file) {
+            originalFile = file;
+            // 显示原图预览
+            const originalUrl = URL.createObjectURL(file);
+            originalImg.onload = () => URL.revokeObjectURL(originalUrl);
+            originalImg.src = originalUrl;
+            previewArea.style.display = 'flex';
+
+            // 开始转换（使用当前滑块质量）
+            const quality = parseInt(qualitySlider.value);
+            convertToWebP(file, quality);
+        }
+
+        // 下载按钮
+        downloadBtn.addEventListener('click', () => {
+            if (!currentBlob) return;
+            // 构建下载链接
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(currentBlob);
+            let fileName = 'converted.webp';
+            if (originalFile && originalFile.name) {
+                // 保留原名，只改后缀
+                const nameWithoutExt = originalFile.name.replace(/\.[^/.]+$/, '');
+                fileName = `${nameWithoutExt}.webp`;
+            }
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+    })();
+</script>
+</body>
+</html>
