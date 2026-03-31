@@ -12,3 +12,7 @@
 > [deepseek](https://www.deepseek.com/)
 >
 > [jszip](https://github.com/Stuk/jszip/tree/main)
+
+2026-03-31 23:37更新
+* 更改为暗色界面，适配我的使用习惯
+* 添加更为流畅的过渡动画与js代码，避免了界面闪烁
