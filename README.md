@@ -1,6 +1,8 @@
 # webp
 实验一下deepseek写的代码
 
+> <https://wwwek.github.io/webp/>
+
 * 它会调用浏览器内置的 WebP 编码器将画布上的像素数据重新编码成 WebP 格式的二进制数据
 * 如果浏览器不支持的话，会提示不支持
 
