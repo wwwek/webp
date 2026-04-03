@@ -12,10 +12,10 @@
     * {
       margin: 0;
       padding: 0;
-      border-style: solid;
+      /*border-style: solid;
       border-width: 1px;
       border-color: #ffcccc;
-      box-sizing: border-box;
+      box-sizing: border-box;*/
     }
     
     body {
@@ -121,7 +121,12 @@
 }
     
     .beijing {
-      background-color: #18161A; 
+      background-color: #1A4C4F; 
+    }
+    
+    .gaobeijing {
+       background-color: #266C70; 
+       box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
     }
     
     .yuanjiao {
@@ -171,25 +176,27 @@
                 left: 100%; 
             }
         }
+        
+
     </style>
 </head>
 
 <body>
 <div class="beijing" style="color: #E6E6E6; padding: 40px 10px; min-height: 100vh; ">
   <!-- 一个包含所有内容的div flex column容器 -->
-  <div class="column yuanjiao space-between" style="min-height: 200vw; ">
+  <div class="column space-between" style="min-height: 200vw; gap: 20px; ">
   
-        <h1 style="flex: 1" class="flex x-center y-center">✨ 图片转 WebP</h1>
-        <div style="flex: 1" class="flex x-center y-center">批量转换 · 悬浮下载按钮 · 本地隐私安全</div>
+        <h1 style="flex: 1" class="flex x-center y-center gaobeijing yuanjiao">✨ 图片转 WebP</h1>
+        <div style="flex: 1" class="flex x-center y-center gaobeijing yuanjiao">批量转换 · 悬浮下载按钮 · 本地隐私安全</div>
 
-    <div class="flex yuanjiao">
-      <div id="uploadFromMedia" style="flex: 1; aspect-ratio: 1 / 1; margin: 4px; " class="yuanjiao flex x-center y-center">📸 从相册选择 (单张)</div>
-      <div id="uploadFromFileAny" style="flex: 1; aspect-ratio: 1 / 1; margin: 4px; " class="yuanjiao flex x-center y-center">📁 文件管理器 (所有文件, 支持多选)</div>
-    </div>
+        <div class="flex yuanjiao " style="overflow: hidden; gap: 10px; ">
+            <div id="uploadFromMedia" style="flex: 1; aspect-ratio: 1 / 1; ; " class="flex x-center y-center gaobeijing yuanjiao">📸 从相册选择 (单张)</div>
+            <div id="uploadFromFileAny" style="flex: 1; aspect-ratio: 1 / 1;  " class="flex x-center y-center gaobeijing yuanjiao">📁 文件管理器 (所有文件, 支持多选)</div>
+        </div>
     
     
         <!-- 这里是滑动选择图片压缩质量嵌套 -->
-        <div class="column x-center y-center" style="flex: 1">
+        <div class="column x-center y-center gaobeijing yuanjiao" style="flex: 1">
             <div>
                 <span>🎨 压缩质量</span>
                 <span id="qualityValue">92</span><span>%</span>
@@ -197,21 +204,22 @@
             <input type="range" id="qualitySlider" min="1" max="100" value="92" step="1" style="width: 95%; ">
         </div>
     
-      <div style="flex: 1" class="column x-center y-center">
-        <!-- 图片列表根容器，选择的图片会显示在这里，并且替换掉原有文字 -->
-        <div id="filesContainer">
-          <div>选择图片后，将自动转换为 WebP 并显示在此处</div>            
+        <div style="flex: 1; gap: 10px; " class="column x-center y-center">
+           <!-- 图片列表根容器，选择的图片会显示在这里，并且替换掉原有文字 -->
+           <div id="filesContainer" class="gaobeijing yuanjiao">
+              <div>选择图片后，将自动转换为 WebP 并显示在此处</div>            
+           </div>
+          
+           <!-- 悬浮按钮 -->
+           <button id="downloadButton" class="daohanglan yuanjiao hidden" style="border: none; outline: none">📦 打包下载全部 (ZIP)</button>
         </div>
-        <!-- 悬浮按钮 -->
-        <button id="downloadButton" class="daohanglan yuanjiao hidden">📦 打包下载全部 (ZIP)</button>
-      </div>
 
-        <div style="flex: 1" class="flex x-center y-center">
+        <div style="flex: 1" class="flex x-center y-center gaobeijing yuanjiao">
             💡 手机提示：如果默认打开相册导致卡顿，请使用「文件管理器 (所有文件)」按钮，
             它会直接调用系统文件管理器，你可以手动进入文件夹选择图片。
         </div>
 
-        <div style="flex: 1" class="flex x-center y-center">
+        <div style="flex: 1" class="flex x-center y-center gaobeijing yuanjiao">
             🔒 所有转换都在你的设备上完成，图片不上传服务器。<br>
             📦 多图时一键打包ZIP，单图时直接下载。按钮始终固定在屏幕底部。
         </div>
